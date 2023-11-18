@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from pytrends.request import TrendReq
+from pytrends.exceptions import ResponseError
 import os
-import pytrends.exceptions
 
 app = Flask(__name__)
 
@@ -21,8 +21,10 @@ def get_google_trends_data(keyword, timeframe, geo):
             'suggestions': [suggestion['title'] for suggestion in suggestions]
         }
         return data
-    except pytrends.exceptions.TooManyRequestsError:
-        return {'trends': [], 'suggestions': [], 'error': 'Too many requests. Please try again later.'}
+    except ResponseError as e:
+        if e.response and e.response.status_code == 429:
+            return {'trends': [], 'suggestions': [], 'error': 'Too many requests. Please try again later.'}
+        raise
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
