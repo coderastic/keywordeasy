@@ -1,20 +1,28 @@
 from flask import Flask, render_template, request
 from pytrends.request import TrendReq
 import os
+import pytrends.exceptions
 
 app = Flask(__name__)
 
 def get_google_trends_data(keyword, timeframe, geo):
     pytrends = TrendReq(hl='en-US', tz=360)
-    pytrends.build_payload([keyword], cat=0, timeframe=timeframe, geo=geo if geo else '', gprop='')
-    related_queries = pytrends.related_queries()
-    suggestions = pytrends.suggestions(keyword)
+    try:
+        pytrends.build_payload([keyword], cat=0, timeframe=timeframe, geo=geo if geo else '', gprop='')
+        related_queries = pytrends.related_queries()
+        suggestions = pytrends.suggestions(keyword)
 
-    data = {
-        'trends': related_queries[keyword]['top']['query'].tolist() if related_queries.get(keyword) else [],
-        'suggestions': [suggestion['title'] for suggestion in suggestions]
-    }
-    return data
+        trends = []
+        if related_queries.get(keyword) and 'top' in related_queries[keyword]:
+            trends = related_queries[keyword]['top']['query'].tolist()
+
+        data = {
+            'trends': trends,
+            'suggestions': [suggestion['title'] for suggestion in suggestions]
+        }
+        return data
+    except pytrends.exceptions.TooManyRequestsError:
+        return {'trends': [], 'suggestions': [], 'error': 'Too many requests. Please try again later.'}
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -28,6 +36,8 @@ def find_trends():
     page = request.args.get('page', 1, type=int)
 
     trends_data = get_google_trends_data(keyword, timeframe, geo)
+    if 'error' in trends_data:
+        return render_template('error.html', error=trends_data['error'])
 
     # Pagination Logic
     per_page = 20
