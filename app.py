@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request
 from pytrends.request import TrendReq
-import os
 
 app = Flask(__name__)
 
 def get_google_trends_data(keyword, timeframe, geo):
     pytrends = TrendReq(hl='en-US', tz=360)
-    pytrends.build_payload([keyword], cat=0, timeframe=timeframe, geo=geo, gprop='')
+    pytrends.build_payload([keyword], cat=0, timeframe=timeframe, geo=geo if geo else '', gprop='')
     related_queries = pytrends.related_queries()
     suggestions = pytrends.suggestions(keyword)
 
@@ -32,5 +31,4 @@ def find_trends():
     return render_template('results.html', keyword=keyword, trends_data=trends_data)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
