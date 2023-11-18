@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trend Results</title>
+</head>
+<body>
+    <h2>Trending Keywords for "{{ keyword }}"</h2>
+    <ul>
+        {% for trend in trends %}
+            <li>{{ trend }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
