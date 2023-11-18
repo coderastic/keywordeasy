@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Trend Results</title>
+    <title>Trending Keywords</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
+        .container { background-color: white; padding: 20px; border-radius: 8px; display: inline-block; margin: 10px; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 5px; border-bottom: 1px solid #ddd; }
+        .suggestions { margin-top: 30px; }
+    </style>
 </head>
 <body>
-    <h2>Trending Keywords for "{{ keyword }}"</h2>
-    <ul>
-        {% for trend in trends %}
-            <li>{{ trend }}</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h2>Trending Keywords for "{{ keyword }}"</h2>
+        <ul>
+            {% for trend in trends_data['trends'] %}
+                <li>{{ trend }}</li>
+            {% endfor %}
+        </ul>
+        <!-- Pagination logic goes here -->
+    </div>
+
+    <div class="container suggestions">
+        <h3>Top Suggestions</h3>
+        <ul>
+            {% for suggestion in trends_data['suggestions'] %}
+                <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
