@@ -18,43 +18,24 @@ def get_google_trends_data(keyword, timeframe, geo):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    trends_data = None
-    if request.method == 'POST':
-        keyword = request.form['keyword']
-        timeframe = request.form.get('timeframe', 'today 12-m')
-        geo = request.form.get('geo', '')
-        trends_data = get_google_trends_data(keyword, timeframe, geo)
-
-        # Pagination
-        page = request.args.get('page', 1, type=int)
-        per_page = 20
-        total_keywords = len(trends_data['trends'])
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_keywords = trends_data['trends'][start:end]
-        total_pages = (total_keywords - 1) // per_page + 1
-        trends_data['trends'] = paginated_keywords
-
-        return render_template('results.html', keyword=keyword, trends_data=trends_data, page=page, total_pages=total_pages, suggestions=trends_data['suggestions'])
-
     return render_template('index.html')
 
-@app.route('/find-trends', methods=['POST'])
+@app.route('/find-trends', methods=['GET', 'POST'])
 def find_trends():
-    keyword = request.form['keyword']
-    timeframe = request.form.get('timeframe', 'today 12-m')
-    geo = request.form.get('geo', '')
+    keyword = request.args.get('keyword') if request.method == 'GET' else request.form['keyword']
+    timeframe = request.args.get('timeframe', 'today 12-m') if request.method == 'GET' else request.form.get('timeframe', 'today 12-m')
+    geo = request.args.get('geo', '') if request.method == 'GET' else request.form.get('geo', '')
+    page = request.args.get('page', 1, type=int)
+
     trends_data = get_google_trends_data(keyword, timeframe, geo)
 
-    # Pagination
-    page = request.args.get('page', 1, type=int)
+    # Pagination Logic
     per_page = 20
     total_keywords = len(trends_data['trends'])
     start = (page - 1) * per_page
     end = start + per_page
     paginated_keywords = trends_data['trends'][start:end]
     total_pages = (total_keywords - 1) // per_page + 1
-    trends_data['trends'] = paginated_keywords
 
     return render_template('results.html', keyword=keyword, trends_data=trends_data, page=page, total_pages=total_pages, suggestions=trends_data['suggestions'])
 
