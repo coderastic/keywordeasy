@@ -36,10 +36,10 @@
     <div class="container">
         <h2>Trending Keywords for "{{ keyword }}"</h2>
         <button onclick="copyToClipboard()">Copy to Clipboard</button>
-        <input type="text" value="{{ trends_data | join(', ') }}" id="hiddenKeywords" style="position: absolute; left: -9999px;">
+        <input type="text" value="{{ trends_data['trends'] | join(', ') }}" id="hiddenKeywords" style="position: absolute; left: -9999px;">
 
         <ul>
-            {% for trend in trends_data %}
+            {% for trend in trends_data['trends'] %}
                 <li>{{ trend }}</li>
             {% endfor %}
         </ul>
@@ -47,19 +47,19 @@
         <div class="pagination">
             {% if total_pages > 1 %}
                 {% if page > 1 %}
-                    <a href="{{ url_for('find_trends', page=page-1) }}">&laquo; Previous</a>
+                    <a href="{{ url_for('find_trends', page=page-1, keyword=keyword, timeframe=timeframe, geo=geo) }}">&laquo; Previous</a>
                 {% endif %}
 
                 {% for p in range(1, total_pages + 1) %}
                     {% if p == page %}
                         <span>{{ p }}</span>
                     {% else %}
-                        <a href="{{ url_for('find_trends', page=p) }}">{{ p }}</a>
+                        <a href="{{ url_for('find_trends', page=p, keyword=keyword, timeframe=timeframe, geo=geo) }}">{{ p }}</a>
                     {% endif %}
                 {% endfor %}
 
                 {% if page < total_pages %}
-                    <a href="{{ url_for('find_trends', page=page+1) }}">Next &raquo;</a>
+                    <a href="{{ url_for('find_trends', page=page+1, keyword=keyword, timeframe=timeframe, geo=geo) }}">Next &raquo;</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -68,7 +68,7 @@
     <div class="container suggestions">
         <h3>Top Suggestions</h3>
         <ul>
-            {% for suggestion in suggestions %}
+            {% for suggestion in trends_data['suggestions'] %}
                 <li>{{ suggestion }}</li>
             {% endfor %}
         </ul>
