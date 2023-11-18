@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Keyword Trend Finder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KeywordEasy - Discover trending keywords and popular search queries">
+    <title>KeywordEasy - Your Tool for Trending Keywords</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
         form { background-color: white; padding: 20px; border-radius: 8px; display: inline-block; }
@@ -24,7 +27,12 @@
             <option value="today 12-m">Last Year</option>
         </select>
         <br>
-        <input type="text" name="geo" placeholder="Country (e.g., US)">
+        <select name="geo">
+            <option value="">Worldwide</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <!-- Add other countries as needed -->
+        </select>
         <br>
         <button type="submit">Get Keywords</button>
     </form>
