@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from pytrends.request import TrendReq
 import requests
 import random
+import os
 
 app = Flask(__name__)
 
