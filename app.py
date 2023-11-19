@@ -32,6 +32,7 @@ def find_trends():
     keyword = request.args.get('keyword') if request.method == 'GET' else request.form['keyword']
     timeframe = request.args.get('timeframe', 'today 12-m') if request.method == 'GET' else request.form.get('timeframe', 'today 12-m')
     geo = request.args.get('geo', '') if request.method == 'GET' else request.form.get('geo', '')
+    page = request.args.get('page', 1, type=int)  # Get page for both GET and POST
 
     trends_data = get_google_trends_data(keyword, timeframe, geo)
     if 'error' in trends_data:
@@ -40,7 +41,6 @@ def find_trends():
     items_per_page = 20
     total_items = len(trends_data['trends'])
     total_pages = (total_items + items_per_page - 1) // items_per_page
-    page = request.args.get('page', 1, type=int)
 
     return render_template('results.html', keyword=keyword, trends_data=trends_data, total_pages=total_pages, page=page)
 
