@@ -18,10 +18,13 @@ def get_live_proxies():
     api_url = 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=250&country=all&ssl=all&anonymity=all'
     response = requests.get(api_url)
     proxy_list = ['https://' + proxy for proxy in response.text.strip().split('\n') if proxy]
-    return [proxy for proxy in proxy_list if is_proxy_live(proxy)]
+    live_proxies = [proxy for proxy in proxy_list if is_proxy_live(proxy)]
+    print(f"Live proxies: {live_proxies}")  # Debugging line
+    return live_proxies
 
 def get_google_trends_data(keyword, timeframe, geo, proxies):
     proxy = {'https': random.choice(proxies)} if proxies else None
+    print(f"Using proxy: {proxy}")  # Debugging line
     pytrends = TrendReq(hl='en-US', tz=360, proxies=proxy)
     try:
         pytrends.build_payload([keyword], cat=0, timeframe=timeframe, geo=geo if geo else '', gprop='')
@@ -38,6 +41,7 @@ def get_google_trends_data(keyword, timeframe, geo, proxies):
         }
         return data
     except Exception as e:
+        print(f"Error in Pytrends request: {e}")  # Debugging line
         return {'trends': [], 'suggestions': [], 'error': str(e)}
 
 @app.route('/', methods=['GET', 'POST'])
@@ -51,8 +55,12 @@ def find_trends():
     geo = request.args.get('geo', '') if request.method == 'GET' else request.form.get('geo', '')
     proxies = get_live_proxies()
 
+    if not proxies:
+        print("No live proxies found")  # Debugging line
+
     trends_data = get_google_trends_data(keyword, timeframe, geo, proxies)
     if 'error' in trends_data:
+        print(f"Error in trends data: {trends_data['error']}")  # Debugging line
         return render_template('error.html', error=trends_data['error'])
 
     # (Add your pagination logic here)
