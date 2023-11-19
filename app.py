@@ -15,7 +15,7 @@ def is_proxy_live(proxy):
         return False
 
 def get_live_proxies():
-    api_url = 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=250&country=all&ssl=all&anonymity=all'
+    api_url = 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=https&timeout=250&country=all&ssl=all&anonymity=all'
     response = requests.get(api_url)
     proxy_list = ['https://' + proxy for proxy in response.text.strip().split('\n') if proxy]
     live_proxies = [proxy for proxy in proxy_list if is_proxy_live(proxy)]
