@@ -37,10 +37,14 @@ def find_trends():
     if 'error' in trends_data:
         return render_template('error.html', error=trends_data['error'])
 
-    # Add your pagination logic here
+    # Pagination logic
+    items_per_page = 20
+    total_items = len(trends_data['trends'])
+    total_pages = (total_items + items_per_page - 1) // items_per_page
 
-    return render_template('results.html', keyword=keyword, trends_data=trends_data)
+    return render_template('results.html', keyword=keyword, trends_data=trends_data, total_pages=total_pages)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
+
 
